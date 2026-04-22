@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#111210">
+<title>Português A1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── DESIGN TOKENS ─────────────────────────────────────── */
+:root {
+  --bg:        #111210;
+  --bg2:       #171815;
+  --surface:   #1c1d1a;
+  --surface2:  #222320;
+  --surface3:  #2a2b27;
+  --border:    #2e2f2b;
+  --border2:   #383930;
+
+  --accent:    #c9714a;       /* terracotta warm */
+  --accent-lo: rgba(201,113,74,0.12);
+  --accent-hi: #d98a66;
+
+  --ink:       #e8e4dc;
+  --ink2:      #b8b4ac;
+  --ink3:      #787570;
+  --ink4:      #4a4844;
+
+  --ok:        #5a9e7a;
+  --ok-lo:     rgba(90,158,122,0.12);
+  --err:       #b85c5c;
+  --err-lo:    rgba(184,92,92,0.12);
+  --warn:      #c49a3a;
+  --warn-lo:   rgba(196,154,58,0.10);
+
+  --r-sm:   10px;
+  --r-md:   14px;
+  --r-lg:   18px;
+  --r-xl:   22px;
+
+  --nav-h: 64px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+}
+
+/* ─── RESET ──────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+html, body {
+  height: 100%; overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  font-family: 'Geist', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── SCROLL ─────────────────────────────────────────────── */
+#scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(var(--nav-h) + var(--safe-b) + 24px);
+}
+
+/* ─── SVG ICON UTILITY ───────────────────────────────────── */
+.ico { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ico svg { display: block; }
+
+/* ─── BOTTOM NAV ─────────────────────────────────────────── */
+#bottom-nav {
+  height: calc(var(--nav-h) + var(--safe-b));
+  padding-bottom: var(--safe-b);
+  background: rgba(17,18,16,0.96);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  padding-top: 10px;
+  flex-shrink: 0;
+  z-index: 50;
+}
+.nav-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 4px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  position: relative;
+  transition: opacity 0.15s;
+}
+.nav-tab .nav-ico svg { transition: all 0.2s cubic-bezier(.4,0,.2,1); }
+.nav-tab .nav-lbl {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--ink3);
+  letter-spacing: 0.2px;
+  transition: color 0.15s;
+}
+.nav-tab.active .nav-lbl { color: var(--accent); }
+.nav-tab.active .nav-ico svg { stroke: var(--accent); }
+.nav-tab:not(.active) .nav-ico svg { stroke: var(--ink4); }
+.nav-tab.active::before {
+  content: '';
+  position: absolute;
+  top: -10px; left: 50%;
+  transform: translateX(-50%);
+  width: 24px; height: 2px;
+  background: var(--accent);
+  border-radius: 0 0 2px 2px;
+}
+
+/* ─── PANELS ─────────────────────────────────────────────── */
+.panel { display: none; }
+.panel.active { display: block; animation: fadeUp 0.2s ease; }
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ─── PAGE HEADER ────────────────────────────────────────── */
+.page-header {
+  padding: calc(var(--safe-t) + 18px) 20px 0;
+  position: sticky; top: 0; z-index: 10;
+  background: var(--bg);
+}
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3px;
+}
+.page-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--ink);
+}
+.page-sub {
+  font-size: 12px;
+  color: var(--ink3);
+  font-weight: 400;
+  padding-bottom: 14px;
+}
+.hline { height: 1px; background: var(--border); margin: 0 -20px; }
+
+/* ─── ICON BUTTON (header) ───────────────────────────────── */
+.icon-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.icon-btn:active { background: var(--surface3); }
+.icon-btn svg { stroke: var(--ink3); }
+
+/* ─── SCORE BAR ──────────────────────────────────────────── */
+.score-row {
+  display: flex;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.score-cell {
+  flex: 1;
+  padding: 12px 8px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+  position: relative;
+}
+.score-cell:last-child { border-right: none; }
+.score-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+.score-lbl {
+  font-size: 9px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  color: var(--ink3);
+  margin-top: 3px;
+}
+.sn-accent { color: var(--accent); }
+.sn-ok     { color: var(--ok); }
+.sn-err    { color: var(--err); }
+
+/* ─── FILTER SECTION ─────────────────────────────────────── */
+.filter-label {
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--ink3);
+  padding: 16px 20px 6px;
+}
+.chip-row {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding: 2px 20px 4px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.chip-row::-webkit-scrollbar { display: none; }
+.chip {
+  flex-shrink: 0;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 17px;
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  color: var(--ink3);
+  font-size: 12.5px;
+  font-weight: 500;
+  font-family: 'Geist', sans-serif;
+  cursor: pointer;
+  transition: all 0.14s;
+  display: flex; align-items: center;
+  white-space: nowrap;
+  letter-spacing: 0.1px;
+}
+.chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ─── BUTTONS ────────────────────────────────────────────── */
+.action-row {
+  display: flex;
+  gap: 10px;
+  padding: 14px 20px 4px;
+}
+.btn {
+  height: 48px;
+  border-radius: var(--r-md);
+  border: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  font-family: 'Geist', sans-serif;
+  cursor: pointer;
+  transition: all 0.14s;
+  display: flex; align-items: center; justify-content: center;
+  gap: 7px;
+  letter-spacing: 0.1px;
+}
+.btn svg { flex-shrink: 0; }
+.btn-fill  { background: var(--accent); color: #fff; flex: 1; }
+.btn-fill:active { background: #b5603c; transform: scale(0.98); }
+.btn-outline { background: var(--surface2); color: var(--ink2); flex: 1; border: 1px solid var(--border2); }
+.btn-outline:active { background: var(--surface3); transform: scale(0.98); }
+.btn-ghost  { background: transparent; color: var(--ink3); border: 1px solid var(--border); }
+.btn-ghost:active { background: var(--surface2); }
+.btn-sm { height: 36px; font-size: 12px; border-radius: var(--r-sm); padding: 0 13px; flex: unset; }
+.btn:disabled { opacity: 0.35; pointer-events: none; }
+
+/* ─── EXERCISE AREA ──────────────────────────────────────── */
+#exercise-area { padding: 8px 16px 0; }
+
+/* Empty / loading states */
+.state-empty {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 56px 28px;
+  gap: 14px; text-align: center;
+}
+.state-empty .empty-ico svg { stroke: var(--ink4); }
+.state-empty p { font-size: 13.5px; color: var(--ink3); line-height: 1.65; }
+.state-empty strong { color: var(--ink2); font-weight: 500; }
+
+.state-loading {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 60px 20px; gap: 16px;
+}
+.spinner {
+  width: 28px; height: 28px;
+  border: 2.5px solid var(--border2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-txt { font-size: 12.5px; color: var(--ink3); }
+
+/* ─── EXERCISE CARD ──────────────────────────────────────── */
+.ex-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 18px 16px;
+  margin-bottom: 12px;
+  transition: border-color 0.2s;
+}
+.ex-card.state-ok  { border-color: var(--ok);  }
+.ex-card.state-err { border-color: var(--err); }
+
+/* Card meta row */
+.ex-meta {
+  display: flex; gap: 7px; align-items: center;
+  margin-bottom: 13px; flex-wrap: wrap;
+}
+.ex-badge {
+  font-size: 9px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  padding: 3px 8px; border-radius: 5px;
+  border: 1px solid;
+}
+.badge-mcq       { color: var(--ok);     border-color: rgba(90,158,122,0.35);  background: var(--ok-lo); }
+.badge-fill      { color: var(--warn);   border-color: rgba(196,154,58,0.35);  background: var(--warn-lo); }
+.badge-tf        { color: var(--accent); border-color: rgba(201,113,74,0.35);  background: var(--accent-lo); }
+.badge-translate { color: #8899cc;       border-color: rgba(136,153,204,0.35); background: rgba(136,153,204,0.08); }
+
+.ex-chapter { font-size: 11px; color: var(--ink3); font-weight: 400; }
+
+/* Question */
+.ex-q {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.55;
+  margin-bottom: 15px;
+}
+.ex-q em {
+  font-style: normal;
+  color: var(--accent-hi);
+  border-bottom: 1.5px dashed var(--accent);
+  padding-bottom: 1px;
+}
+
+/* Fill input */
+.fill-inp {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-sm);
+  padding: 13px 14px;
+  font-size: 16px;
+  color: var(--ink);
+  font-family: 'Geist', sans-serif;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+  -webkit-appearance: none;
+  letter-spacing: 0.1px;
+}
+.fill-inp:focus { border-color: var(--accent); background: var(--surface3); }
+.fill-inp.inp-ok  { border-color: var(--ok);  background: var(--ok-lo); }
+.fill-inp.inp-err { border-color: var(--err); background: var(--err-lo); }
+
+/* MCQ */
+.mcq-list { display: grid; gap: 8px; }
+.mcq-opt {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-sm);
+  padding: 13px 14px;
+  font-size: 14px;
+  color: var(--ink2);
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Geist', sans-serif;
+  font-weight: 400;
+  transition: all 0.13s;
+  min-height: 48px;
+  display: flex; align-items: center;
+  gap: 10px;
+  letter-spacing: 0.1px;
+}
+.mcq-opt::before {
+  content: '';
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border2);
+  flex-shrink: 0;
+  transition: all 0.13s;
+}
+.mcq-opt:active:not(:disabled) { background: var(--surface3); }
+.mcq-opt.opt-ok   { border-color: var(--ok);  background: var(--ok-lo);  color: var(--ok); }
+.mcq-opt.opt-ok::before   { border-color: var(--ok);  background: var(--ok); box-shadow: 0 0 0 3px var(--ok-lo); }
+.mcq-opt.opt-err  { border-color: var(--err); background: var(--err-lo); color: var(--err); }
+.mcq-opt.opt-err::before  { border-color: var(--err); background: var(--err); }
+.mcq-opt.opt-show { border-color: var(--ok);  background: rgba(90,158,122,0.04); }
+.mcq-opt.opt-show::before { border-color: var(--ok); background: var(--ok); }
+.mcq-opt:disabled { cursor: default; }
+
+/* T/F */
+.tf-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tf-btn {
+  height: 52px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink3);
+  cursor: pointer;
+  font-family: 'Geist', sans-serif;
+  transition: all 0.13s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.tf-btn svg { flex-shrink: 0; stroke: currentColor; }
+.tf-btn:active:not(:disabled) { transform: scale(0.97); }
+.tf-btn.tf-ok  { border-color: var(--ok);  color: var(--ok);  background: var(--ok-lo); }
+.tf-btn.tf-err { border-color: var(--err); color: var(--err); background: var(--err-lo); }
+.tf-btn:disabled { cursor: default; }
+
+/* Card actions */
+.ex-actions {
+  display: flex; gap: 8px;
+  margin-top: 14px; flex-wrap: wrap;
+}
+
+/* Feedback line */
+.feedback {
+  display: none;
+  margin-top: 10px;
+  padding: 10px 13px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+.feedback.fb-ok  { display: block; background: var(--ok-lo);   border: 1px solid rgba(90,158,122,0.25);  color: var(--ok); }
+.feedback.fb-err { display: block; background: var(--err-lo);  border: 1px solid rgba(184,92,92,0.25);   color: var(--err); }
+
+/* Explanation box */
+.expl {
+  display: none;
+  margin-top: 9px;
+  padding: 12px 14px;
+  border-radius: var(--r-sm);
+  background: var(--warn-lo);
+  border: 1px solid rgba(196,154,58,0.18);
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: #b89a50;
+}
+.expl.vis { display: block; }
+.expl strong { color: var(--warn); }
+
+/* ─── FLASHCARDS ─────────────────────────────────────────── */
+#fc-wrap { padding: 16px 20px 0; }
+
+.fc-container {
+  perspective: 900px;
+  height: 210px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  user-select: none;
+}
+.fc-inner {
+  position: relative; width: 100%; height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.42s cubic-bezier(.4,0,.2,1);
+}
+.fc-container.flipped .fc-inner { transform: rotateY(180deg); }
+.fc-face {
+  position: absolute; width: 100%; height: 100%;
+  backface-visibility: hidden;
+  border-radius: var(--r-xl);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 28px 24px; text-align: center; gap: 10px;
+}
+.fc-front {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+}
+.fc-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(145deg, rgba(201,113,74,0.09) 0%, var(--surface) 60%);
+  border: 1px solid var(--accent);
+}
+.fc-word {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.15;
+  letter-spacing: -0.3px;
+}
+.fc-hint { font-size: 11px; color: var(--ink4); display: flex; align-items: center; gap: 5px; }
+.fc-hint svg { stroke: var(--ink4); }
+.fc-translation { font-size: 20px; font-weight: 400; color: var(--accent-hi); line-height: 1.3; }
+.fc-example { font-size: 12px; color: var(--ink3); font-style: italic; }
+
+.fc-progress-bar {
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.fc-progress-fill {
+  height: 100%; background: var(--accent); border-radius: 1px;
+  transition: width 0.3s ease;
+}
+
+.fc-nav {
+  display: flex; align-items: center; gap: 10px;
+}
+.fc-arrow {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.14s;
+  flex-shrink: 0;
+}
+.fc-arrow svg { stroke: var(--ink3); }
+.fc-arrow:active { background: var(--surface3); transform: scale(0.94); }
+.fc-arrow:disabled { opacity: 0.28; pointer-events: none; }
+.fc-counter {
+  flex: 1; text-align: center;
+  font-size: 12px; color: var(--ink3); font-weight: 500;
+}
+.fc-swipe-hint {
+  text-align: center; font-size: 11px; color: var(--ink4);
+  padding: 6px 0 12px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.fc-swipe-hint svg { stroke: var(--ink4); }
+
+/* ─── GRAMMAR LIST ───────────────────────────────────────── */
+#grammar-list-inner { padding: 10px 16px 4px; }
+
+.g-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+  margin-bottom: 9px;
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  min-height: 62px;
+}
+.g-card:active { background: var(--surface2); border-color: var(--border2); }
+.g-card-ico {
+  width: 36px; height: 36px;
+  border-radius: var(--r-sm);
+  background: var(--surface3);
+  border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.g-card-ico svg { stroke: var(--ink3); }
+.g-card-body { flex: 1; min-width: 0; }
+.g-card-title { font-size: 14px; font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.g-card-sub   { font-size: 11.5px; color: var(--ink3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.g-card-ch {
+  font-size: 10px; font-weight: 600; color: var(--accent);
+  background: var(--accent-lo); border: 1px solid rgba(201,113,74,0.25);
+  padding: 2px 7px; border-radius: 5px; flex-shrink: 0;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.g-card-arrow svg { stroke: var(--ink4); }
+
+/* Grammar detail */
+#grammar-detail-panel { display: none; padding: 0 16px 16px; }
+#grammar-detail-panel.active { display: block; }
+
+.back-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 16px 0 12px;
+  font-size: 13.5px; color: var(--ink3); font-weight: 400;
+  cursor: pointer; border: none; background: none;
+  font-family: 'Geist', sans-serif;
+  transition: color 0.14s;
+}
+.back-btn:active { color: var(--ink); }
+.back-btn svg { stroke: var(--ink3); }
+
+.g-detail-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 20px 18px;
+}
+.g-detail-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; font-weight: 700;
+  color: var(--accent-hi);
+  margin-bottom: 3px;
+}
+.g-detail-sub { font-size: 12px; color: var(--ink3); margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+
+.rule-block {
+  background: var(--surface2);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  padding: 11px 14px;
+  margin: 12px 0;
+  font-size: 13px; line-height: 1.7; color: var(--ink2);
+}
+.rule-block strong { color: var(--accent-hi); }
+.rule-block em { font-style: normal; color: var(--ink); }
+
+.ex-block {
+  background: var(--surface2);
+  border-radius: var(--r-sm);
+  padding: 10px 13px; margin: 7px 0;
+}
+.ex-block .pt { font-size: 13.5px; font-weight: 500; color: var(--ink); }
+.ex-block .pt em { font-style: normal; color: var(--accent-hi); }
+.ex-block .it { font-size: 11.5px; color: var(--ink3); margin-top: 2px; }
+
+.g-subtitle {
+  font-size: 9.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--ink3);
+  margin: 18px 0 8px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--border);
+}
+
+.conj-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 12.5px; margin: 10px 0;
+}
+.conj-table th {
+  background: var(--surface3);
+  padding: 8px 10px; text-align: left;
+  font-size: 9.5px; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--ink3);
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+}
+.conj-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border);
+  line-height: 1.4; color: var(--ink2);
+}
+.conj-table tr:last-child td { border-bottom: none; }
+.conj-pron { color: var(--ink3); font-size: 11.5px; }
+.conj-form { font-weight: 600; color: var(--ink); }
+.conj-form em { color: var(--accent-hi); font-style: normal; }
+
+/* ─── PROGRESS ───────────────────────────────────────────── */
+#progress-inner { padding: 16px; }
+
+.prog-trio {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px; margin-bottom: 20px;
+}
+.prog-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 14px 8px; text-align: center;
+}
+.prog-tile .p-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px; font-weight: 700; line-height: 1;
+  letter-spacing: -0.5px;
+}
+.prog-tile .p-lbl {
+  font-size: 9px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.9px;
+  color: var(--ink3); margin-top: 4px;
+}
+
+.ch-rows { display: grid; gap: 9px; }
+.ch-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 13px 15px;
+}
+.ch-row-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 9px; }
+.ch-row-name { font-size: 12.5px; font-weight: 500; color: var(--ink); }
+.ch-row-pct  { font-size: 11px; color: var(--ink3); }
+.prog-track { height: 2px; background: var(--border2); border-radius: 1px; }
+.prog-bar   { height: 2px; background: var(--accent); border-radius: 1px; transition: width 0.5s ease; }
+
+.sec-head {
+  font-size: 9.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--ink3); padding: 16px 0 8px;
+}
+
+/* ─── MODAL (bottom sheet) ───────────────────────────────── */
+#modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  align-items: flex-end; justify-content: center;
+}
+#modal-overlay.vis { display: flex; }
+.modal-sheet {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  padding: 24px 22px calc(24px + var(--safe-b));
+  width: 100%;
+  animation: slideUp 0.28s cubic-bezier(.4,0,.2,1);
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-handle {
+  width: 32px; height: 3px; background: var(--border2);
+  border-radius: 2px; margin: 0 auto 22px;
+}
+.modal-title { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 700; margin-bottom: 8px; }
+.modal-desc  { font-size: 13px; color: var(--ink3); line-height: 1.65; margin-bottom: 18px; }
+.modal-desc a { color: var(--accent-hi); text-decoration: none; }
+.key-inp {
+  width: 100%; background: var(--surface2);
+  border: 1px solid var(--border2); border-radius: var(--r-sm);
+  padding: 13px 14px; font-size: 16px; color: var(--ink);
+  font-family: 'Geist', sans-serif; outline: none;
+  margin-bottom: 13px; -webkit-appearance: none;
+  transition: border-color 0.15s;
+}
+.key-inp:focus { border-color: var(--accent); }
+.modal-note { font-size: 11px; color: var(--ink4); margin-top: 11px; line-height: 1.55; }
+
+/* ─── DESKTOP ────────────────────────────────────────────── */
+@media (min-width: 600px) {
+  body { max-width: 430px; margin: 0 auto; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+}
+</style>
+</head>
+<body>
+
+<!-- ── MODAL ── -->
+<div id="modal-overlay">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">API Key</div>
+    <p class="modal-desc">Per generare esercizi illimitati con AI inserisci la tua Anthropic key. Salvata solo nel browser.<br><a href="https://console.anthropic.com" target="_blank">Ottieni una key →</a></p>
+    <input type="password" id="key-input" class="key-inp" placeholder="sk-ant-..." autocomplete="off">
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-fill" onclick="saveKey()">Salva</button>
+      <button class="btn btn-outline" onclick="closeModal()">Salta</button>
+    </div>
+    <p class="modal-note">Senza key l'app usa ~35 esercizi pre-caricati dal manuale.</p>
+  </div>
+</div>
+
+<!-- ── CONTENT ── -->
+<div id="scroll-area">
+
+  <!-- ESERCIZI -->
+  <div id="panel-exercises" class="panel active">
+    <div class="page-header">
+      <div class="header-row">
+        <div class="page-title">Esercizi</div>
+        <button class="icon-btn" onclick="showModal()" title="API Key">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="5"/><path d="M12.5 10.5 19 4"/><path d="M19 4h-4"/><path d="M19 4v4"/></svg>
+        </button>
+      </div>
+      <div class="page-sub">Scegli il capitolo, il tipo e studia</div>
+      <div class="hline"></div>
+    </div>
+
+    <div class="score-row">
+      <div class="score-cell"><div class="score-num sn-accent" id="sc-total">0</div><div class="score-lbl">Totale</div></div>
+      <div class="score-cell"><div class="score-num sn-ok" id="sc-correct">0</div><div class="score-lbl">Corretti</div></div>
+      <div class="score-cell"><div class="score-num sn-err" id="sc-wrong">0</div><div class="score-lbl">Errati</div></div>
+      <div class="score-cell"><div class="score-num" id="sc-pct" style="color:var(--ink2)">—</div><div class="score-lbl">%</div></div>
+    </div>
+
+    <div class="filter-label">Capitolo</div>
+    <div class="chip-row" id="chapter-chips">
+      <div class="chip active" onclick="setChapter('all',this)">Tutti</div>
+      <div class="chip" onclick="setChapter('1',this)">Cap. 1</div>
+      <div class="chip" onclick="setChapter('2',this)">Cap. 2</div>
+      <div class="chip" onclick="setChapter('3',this)">Cap. 3</div>
+      <div class="chip" onclick="setChapter('4',this)">Cap. 4</div>
+      <div class="chip" onclick="setChapter('5',this)">Cap. 5</div>
+      <div class="chip" onclick="setChapter('6',this)">Cap. 6</div>
+      <div class="chip" onclick="setChapter('7',this)">Cap. 7</div>
+      <div class="chip" onclick="setChapter('8',this)">Cap. 8</div>
+      <div class="chip" onclick="setChapter('9',this)">Cap. 9</div>
+    </div>
+
+    <div class="filter-label">Tipo</div>
+    <div class="chip-row" id="type-chips">
+      <div class="chip active" onclick="setType('all',this)">Tutti</div>
+      <div class="chip" onclick="setType('mcq',this)">Scelta multipla</div>
+      <div class="chip" onclick="setType('fill',this)">Riempimento</div>
+      <div class="chip" onclick="setType('tf',this)">Vero / Falso</div>
+      <div class="chip" onclick="setType('translate',this)">Traduzione</div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-fill" onclick="genAI()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Genera con AI
+      </button>
+      <button class="btn btn-outline" onclick="loadStatic()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Dal manuale
+      </button>
+    </div>
+
+    <div id="exercise-area">
+      <div class="state-empty">
+        <div class="empty-ico ico">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="12" y2="15"/></svg>
+        </div>
+        <p>Premi <strong>Genera con AI</strong> per esercizi infiniti, oppure <strong>Dal manuale</strong> per quelli pre-caricati.</p>
+      </div>
+    </div>
+
+    <div style="padding:4px 16px 4px;display:flex;justify-content:flex-end;">
+      <button class="btn btn-ghost btn-sm" onclick="resetScore()" style="gap:6px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.36"/></svg>
+        Reset
+      </button>
+    </div>
+  </div>
+
+  <!-- FLASHCARD -->
+  <div id="panel-flashcards" class="panel">
+    <div class="page-header">
+      <div class="header-row">
+        <div class="page-title">Flashcard</div>
+        <button class="btn btn-fill btn-sm" onclick="genFC()" style="gap:5px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          AI
+        </button>
+      </div>
+      <div class="page-sub">Tocca per girare · scorri per navigare</div>
+      <div class="hline"></div>
+    </div>
+
+    <div class="chip-row" id="fc-mode-chips" style="padding-top:14px;">
+      <div class="chip active" onclick="setFCMode('vocab',this)">Vocabolario</div>
+      <div class="chip" onclick="setFCMode('verbs',this)">Verbi</div>
+      <div class="chip" onclick="setFCMode('phrases',this)">Frasi</div>
+    </div>
+
+    <div id="fc-wrap">
+      <div class="state-loading"><div class="spinner"></div></div>
+    </div>
+  </div>
+
+  <!-- GRAMMATICA -->
+  <div id="panel-grammar" class="panel">
+    <div class="page-header">
+      <div class="header-row"><div class="page-title">Grammatica</div></div>
+      <div class="page-sub">Tavole di riferimento complete</div>
+      <div class="hline"></div>
+    </div>
+    <div id="grammar-list-inner"></div>
+    <div id="grammar-detail-panel"></div>
+  </div>
+
+  <!-- PROGRESSO -->
+  <div id="panel-progress" class="panel">
+    <div class="page-header">
+      <div class="header-row"><div class="page-title">Progresso</div></div>
+      <div class="page-sub">Sessione corrente</div>
+      <div class="hline"></div>
+    </div>
+    <div id="progress-inner"></div>
+  </div>
+
+</div><!-- /scroll-area -->
+
+<!-- ── BOTTOM NAV ── -->
+<nav id="bottom-nav">
+  <button class="nav-tab active" id="tab-exercises" onclick="showPanel('exercises')">
+    <span class="nav-ico ico">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    </span>
+    <span class="nav-lbl">Esercizi</span>
+  </button>
+  <button class="nav-tab" id="tab-flashcards" onclick="showPanel('flashcards')">
+    <span class="nav-ico ico">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 4v16"/><path d="M2 10h10"/><path d="M2 16h10"/></svg>
+    </span>
+    <span class="nav-lbl">Flashcard</span>
+  </button>
+  <button class="nav-tab" id="tab-grammar" onclick="showPanel('grammar')">
+    <span class="nav-ico ico">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    </span>
+    <span class="nav-lbl">Grammatica</span>
+  </button>
+  <button class="nav-tab" id="tab-progress" onclick="showPanel('progress')">
+    <span class="nav-ico ico">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    </span>
+    <span class="nav-lbl">Progresso</span>
+  </button>
+</nav>
+
+<script>
+
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+// Global error handler for debugging
+window.addEventListener('error', function(e) {
+  console.error('App error:', e.message, 'at', e.filename, e.lineno, e.colno, e.error);
+});
+
+const S = {
+  apiKey: (()=>{ try { return localStorage.getItem('pt_api_key') || ''; } catch(e){ return ''; } })(),
+  chapter: 'all',
+  type: 'all',
+  fcMode: 'vocab',
+  fcIndex: 0,
+  fcCards: [],
+  fcSeen: 0,
+  score: { total: 0, correct: 0, wrong: 0 },
+  chapterStats: {},
+  grammarInited: false,
+  currentChapter: null,
+};
+try { S.chapterStats = JSON.parse((localStorage.getItem('pt_ch_stats')||'{}')) || {}; } catch(e){ S.chapterStats = {}; }
+
+// ══════════════════════════════════════════════════════════
+// GRAMMAR DATA
+// ══════════════════════════════════════════════════════════
+const GRAMMAR = [
+  { id:'ser', ch:1, title:'Verbo SER', sub:'Nazionalità, professione, caratteristiche permanenti', content:`
+    <p class="rule-block"><strong>SER</strong> = caratteristica permanente, nazionalità, professione, provenienza, stato civile, ora/giorno.</p>
+    <table class="conj-table">
+      <tr><th>Pronome</th><th>Forma</th><th>Esempio</th></tr>
+      <tr><td class="conj-pron">Eu</td><td class="conj-form"><em>sou</em></td><td>Eu <em>sou</em> italiano.</td></tr>
+      <tr><td class="conj-pron">Tu</td><td class="conj-form"><em>és</em></td><td>Tu <em>és</em> médico?</td></tr>
+      <tr><td class="conj-pron">Você/Ele/Ela</td><td class="conj-form"><em>é</em></td><td>Ela <em>é</em> portuguesa.</td></tr>
+      <tr><td class="conj-pron">Nós</td><td class="conj-form"><em>somos</em></td><td>Nós <em>somos</em> amigos.</td></tr>
+      <tr><td class="conj-pron">Vocês/Eles</td><td class="conj-form"><em>são</em></td><td>Eles <em>são</em> estudantes.</td></tr>
+    </table>
+    <div class="g-subtitle">Usi principali</div>
+    <div class="ex-block"><div class="pt">A Katja <em>é</em> alemã.</div><div class="it">→ nazionalità (permanente)</div></div>
+    <div class="ex-block"><div class="pt">Hoje <em>é</em> quarta-feira.</div><div class="it">→ giorno/data</div></div>
+    <div class="ex-block"><div class="pt">Esta casa <em>é</em> grande.</div><div class="it">→ caratteristica stabile</div></div>
+  `},
+  { id:'estar', ch:1, title:'Verbo ESTAR', sub:'Luogo, stato temporaneo, emozioni', content:`
+    <p class="rule-block"><strong>ESTAR</strong> = caratteristica temporanea, luogo, emozioni, meteo, saluti.</p>
+    <table class="conj-table">
+      <tr><th>Pronome</th><th>Forma</th></tr>
+      <tr><td class="conj-pron">Eu</td><td class="conj-form"><em>estou</em></td></tr>
+      <tr><td class="conj-pron">Tu</td><td class="conj-form"><em>estás</em></td></tr>
+      <tr><td class="conj-pron">Você/Ele/Ela</td><td class="conj-form"><em>está</em></td></tr>
+      <tr><td class="conj-pron">Nós</td><td class="conj-form"><em>estamos</em></td></tr>
+      <tr><td class="conj-pron">Vocês/Eles</td><td class="conj-form"><em>estão</em></td></tr>
+    </table>
+    <div class="g-subtitle">SER vs ESTAR — la regola chiave</div>
+    <div class="rule-block">
+      <strong>SER</strong> = permanente → "A casa <em>é</em> pequena." (sempre così)<br>
+      <strong>ESTAR</strong> = temporaneo → "A sopa <em>está</em> quente." (adesso, poi si raffredda)<br>
+      <strong>ESTAR</strong> = luogo → "O João <em>está</em> no escritório." (può spostarsi)
+    </div>
+    <div class="ex-block"><div class="pt">Eu <em>estou</em> bem, obrigado.</div><div class="it">→ stato temporaneo</div></div>
+    <div class="ex-block"><div class="pt">Hoje <em>está</em> frio.</div><div class="it">→ meteo</div></div>
+  `},
+  { id:'ar', ch:1, title:'Verbos em -AR', sub:'Falar, gostar, trabalhar, estudar…', content:`
+    <p class="rule-block">Modello: <strong>falar</strong>. Le terminazioni -AR sono le più comuni.</p>
+    <table class="conj-table">
+      <tr><th>Pronome</th><th>Falar</th><th>Gostar</th></tr>
+      <tr><td class="conj-pron">Eu</td><td>fal<em>o</em></td><td>gost<em>o</em></td></tr>
+      <tr><td class="conj-pron">Tu</td><td>fal<em>as</em></td><td>gost<em>as</em></td></tr>
+      <tr><td class="conj-pron">Ele/Ela</td><td>fal<em>a</em></td><td>gost<em>a</em></td></tr>
+      <tr><td class="conj-pron">Nós</td><td>fal<em>amos</em></td><td>gost<em>amos</em></td></tr>
+      <tr><td class="conj-pron">Vocês/Eles</td><td>fal<em>am</em></td><td>gost<em>am</em></td></tr>
+    </table>
+    <div class="rule-block"><strong>Attenzione:</strong> GOSTAR richiede sempre <strong>de</strong>: "Eu gosto <em>de</em> música." — mai senza "de"!</div>
+  `},
+  { id:'artigos', ch:1, title:'Artigos + Preposições', sub:'o/a/os/as e contrazioni con a/de/em/por', content:`
+    <table class="conj-table">
+      <tr><th></th><th>M.sg</th><th>M.pl</th><th>F.sg</th><th>F.pl</th></tr>
+      <tr><td style="color:var(--ink3);font-size:11px">Definito</td><td><em>o</em></td><td><em>os</em></td><td><em>a</em></td><td><em>as</em></td></tr>
+      <tr><td style="color:var(--ink3);font-size:11px">Indefinito</td><td><em>um</em></td><td><em>uns</em></td><td><em>uma</em></td><td><em>umas</em></td></tr>
+    </table>
+    <div class="g-subtitle">Contrazioni (obbligatorie!)</div>
+    <table class="conj-table">
+      <tr><th>Prep.</th><th>+ o</th><th>+ a</th><th>+ os</th><th>+ as</th></tr>
+      <tr><td><em>a</em></td><td>ao</td><td>à</td><td>aos</td><td>às</td></tr>
+      <tr><td><em>de</em></td><td>do</td><td>da</td><td>dos</td><td>das</td></tr>
+      <tr><td><em>em</em></td><td>no</td><td>na</td><td>nos</td><td>nas</td></tr>
+      <tr><td><em>por</em></td><td>pelo</td><td>pela</td><td>pelos</td><td>pelas</td></tr>
+    </table>
+    <div class="rule-block"><strong>Genere:</strong> -o generalmente maschile, -a femminile. Eccezioni: o dia, o mapa, o pijama (m.); a rádio, a mão (f.).</div>
+  `},
+  { id:'possessivos', ch:2, title:'Pronomes Possessivos', sub:'meu/minha, teu/tua, seu/sua…', content:`
+    <table class="conj-table">
+      <tr><th>Pers.</th><th>M.sg</th><th>M.pl</th><th>F.sg</th><th>F.pl</th></tr>
+      <tr><td class="conj-pron">Eu</td><td>o <em>meu</em></td><td>os <em>meus</em></td><td>a <em>minha</em></td><td>as <em>minhas</em></td></tr>
+      <tr><td class="conj-pron">Tu</td><td>o <em>teu</em></td><td>os <em>teus</em></td><td>a <em>tua</em></td><td>as <em>tuas</em></td></tr>
+      <tr><td class="conj-pron">Você</td><td>o <em>seu</em></td><td>os <em>seus</em></td><td>a <em>sua</em></td><td>as <em>suas</em></td></tr>
+      <tr><td class="conj-pron">Nós</td><td>o <em>nosso</em></td><td>os <em>nossos</em></td><td>a <em>nossa</em></td><td>as <em>nossas</em></td></tr>
+      <tr><td class="conj-pron">Eles</td><td>o pai <em>dele</em></td><td colspan="3">a mãe <em>dela</em> / <em>deles/delas</em></td></tr>
+    </table>
+    <div class="rule-block">Il possessivo concorda col <strong>nome posseduto</strong>, non col possessore: "O <em>meu</em> pai / A <em>minha</em> mãe" (entrambi = mio/mia).</div>
+    <div class="rule-block">3ª persona: preferisci <strong>dele/dela</strong> per evitare ambiguità con "seu/sua" (che può voler dire sia "suo" che "di lei/lui/loro").</div>
+  `},
+  { id:'er-ir', ch:4, title:'Verbos -ER e -IR', sub:'comer, beber, fazer, poder…', content:`
+    <table class="conj-table">
+      <tr><th>Pronome</th><th>-ER (comer)</th><th>-IR (abrir)</th></tr>
+      <tr><td class="conj-pron">Eu</td><td>com<em>o</em></td><td>abr<em>o</em></td></tr>
+      <tr><td class="conj-pron">Tu</td><td>com<em>es</em></td><td>abr<em>es</em></td></tr>
+      <tr><td class="conj-pron">Ele/Ela</td><td>com<em>e</em></td><td>abr<em>e</em></td></tr>
+      <tr><td class="conj-pron">Nós</td><td>com<em>emos</em></td><td>abr<em>imos</em></td></tr>
+      <tr><td class="conj-pron">Vocês/Eles</td><td>com<em>em</em></td><td>abr<em>em</em></td></tr>
+    </table>
+    <div class="g-subtitle">Irregolari -ER fondamentali</div>
+    <table class="conj-table">
+      <tr><th></th><th>fazer</th><th>poder</th><th>querer</th><th>ver</th><th>dizer</th></tr>
+      <tr><td class="conj-pron">Eu</td><td><em>faço</em></td><td><em>posso</em></td><td><em>quero</em></td><td><em>vejo</em></td><td><em>digo</em></td></tr>
+      <tr><td class="conj-pron">Tu</td><td>fazes</td><td>podes</td><td>queres</td><td>vês</td><td>dizes</td></tr>
+      <tr><td class="conj-pron">Ele</td><td>faz</td><td>pode</td><td>quer</td><td>vê</td><td>diz</td></tr>
+      <tr><td class="conj-pron">Nós</td><td>fazemos</td><td>podemos</td><td>queremos</td><td>vemos</td><td>dizemos</td></tr>
+      <tr><td class="conj-pron">Eles</td><td>fazem</td><td>podem</td><td>querem</td><td>veem</td><td>dizem</td></tr>
+    </table>
+  `},
+  { id:'plural-ao', ch:3, title:'Plural em -ÃO', sub:'tre pattern: -ães, -ãos, -ões', content:`
+    <div class="rule-block">Le parole in <strong>-ão</strong> formano il plurale in 3 modi diversi — vanno memorizzate caso per caso.</div>
+    <table class="conj-table">
+      <tr><th>Singolare</th><th>Plurale</th><th>Pattern</th></tr>
+      <tr><td>cão</td><td><em>cães</em></td><td>-ão → -ães</td></tr>
+      <tr><td>pão</td><td><em>pães</em></td><td>-ão → -ães</td></tr>
+      <tr><td>alemão</td><td><em>alemães</em></td><td>-ão → -ães</td></tr>
+      <tr><td>mão</td><td><em>mãos</em></td><td>-ão → -ãos</td></tr>
+      <tr><td>irmão</td><td><em>irmãos</em></td><td>-ão → -ãos</td></tr>
+      <tr><td>limão</td><td><em>limões</em></td><td>-ão → -ões</td></tr>
+      <tr><td>coração</td><td><em>corações</em></td><td>-ão → -ões</td></tr>
+      <tr><td>opção</td><td><em>opções</em></td><td>-ção → -ções</td></tr>
+    </table>
+    <div class="rule-block"><strong>Regola sicura:</strong> tutte le parole in <strong>-ção</strong> fanno <strong>-ções</strong>. Il resto va memorizzato.</div>
+  `},
+  { id:'interrogativos', ch:3, title:'Pronomes Interrogativos', sub:'quem, onde, quando, como, qual, quanto…', content:`
+    <table class="conj-table">
+      <tr><th>Interrogativo</th><th>Uso</th><th>Esempio</th></tr>
+      <tr><td><em>Quem</em></td><td>persone</td><td>Quem é ele?</td></tr>
+      <tr><td><em>O que / O quê</em></td><td>cose</td><td>O que é isto?</td></tr>
+      <tr><td><em>Onde</em></td><td>luogo (statico)</td><td>Onde moras?</td></tr>
+      <tr><td><em>Aonde</em></td><td>moto a luogo</td><td>Aonde vais?</td></tr>
+      <tr><td><em>Quando</em></td><td>tempo</td><td>Quando começas?</td></tr>
+      <tr><td><em>Como</em></td><td>modo</td><td>Como te chamas?</td></tr>
+      <tr><td><em>Qual/Quais</em></td><td>selezione</td><td>Qual é a tua profissão?</td></tr>
+      <tr><td><em>Quanto/a</em></td><td>quantità/prezzo</td><td>Quanto custa?</td></tr>
+    </table>
+    <div class="rule-block">Per enfasi nel parlato si aggiunge <strong>"é que"</strong>: "Como <em>é que</em> te chamas?" è più naturale di "Como te chamas?"</div>
+  `},
+  { id:'demonstrativos', ch:2, title:'Pronomes Demonstrativos', sub:'este/esse/aquele + distanza', content:`
+    <table class="conj-table">
+      <tr><th>Distanza</th><th>M.sg</th><th>F.sg</th><th>Invar.</th></tr>
+      <tr><td style="font-size:11px">Vicino a chi parla</td><td><em>este</em></td><td><em>esta</em></td><td><em>isto</em></td></tr>
+      <tr><td style="font-size:11px">Vicino a chi ascolta</td><td><em>esse</em></td><td><em>essa</em></td><td><em>isso</em></td></tr>
+      <tr><td style="font-size:11px">Lontano da entrambi</td><td><em>aquele</em></td><td><em>aquela</em></td><td><em>aquilo</em></td></tr>
+    </table>
+    <div class="rule-block">Le forme invariabili (<strong>isto, isso, aquilo</strong>) si usano senza sostantivo: "O que é <em>isto</em>?"<br>
+    Con sostantivo si usano le forme variabili: "<em>Este</em> livro é meu."</div>
+  `},
+  { id:'estar-a', ch:5, title:'Estar a + Infinitivo', sub:'Azioni in corso nel presente', content:`
+    <p class="rule-block"><strong>ESTAR a + infinitivo</strong> = azione che sta accadendo adesso (progressivo). Solo portoghese europeo.</p>
+    <table class="conj-table">
+      <tr><th>PT europeo</th><th>PT brasiliano</th><th>Italiano</th></tr>
+      <tr><td>Estou <em>a falar</em></td><td>Estou fal<em>ando</em></td><td>Sto parlando</td></tr>
+      <tr><td>Ela está <em>a comer</em></td><td>Ela está com<em>endo</em></td><td>Lei sta mangiando</td></tr>
+    </table>
+    <div class="rule-block">In PT europeo il verbo dopo <em>a</em> rimane sempre all'<strong>infinitivo</strong>, mai al gerundio.</div>
+    <div class="ex-block"><div class="pt">O que estás a fazer?</div><div class="it">Cosa stai facendo?</div></div>
+    <div class="ex-block"><div class="pt">Estou a estudar português.</div><div class="it">Sto studiando portoghese.</div></div>
+  `},
+  { id:'ir-inf', ch:7, title:'IR + Infinitivo', sub:'Futuro prossimo', content:`
+    <p class="rule-block"><strong>IR (presente) + infinitivo</strong> = futuro prossimo. Come "going to" in inglese o "andare a fare" in italiano.</p>
+    <table class="conj-table">
+      <tr><th>Pronome</th><th>IR</th><th>Esempio</th></tr>
+      <tr><td class="conj-pron">Eu</td><td><em>vou</em></td><td>Vou estudar amanhã.</td></tr>
+      <tr><td class="conj-pron">Tu</td><td><em>vais</em></td><td>Vais ao cinema?</td></tr>
+      <tr><td class="conj-pron">Ele/Ela</td><td><em>vai</em></td><td>Ela vai trabalhar.</td></tr>
+      <tr><td class="conj-pron">Nós</td><td><em>vamos</em></td><td>Vamos jantar fora.</td></tr>
+      <tr><td class="conj-pron">Vocês/Eles</td><td><em>vão</em></td><td>Eles vão partir.</td></tr>
+    </table>
+  `},
+  { id:'pps', ch:8, title:'Pretérito Perfeito Simples', sub:'Passato: regolari e irregolari', content:`
+    <p class="rule-block">Il <strong>PPS</strong> indica azioni completate nel passato. Segnali temporali: ontem, na semana passada, em 2020…</p>
+    <table class="conj-table">
+      <tr><th>Pronome</th><th>falar (-AR)</th><th>comer (-ER)</th><th>partir (-IR)</th></tr>
+      <tr><td class="conj-pron">Eu</td><td>fal<em>ei</em></td><td>com<em>i</em></td><td>part<em>i</em></td></tr>
+      <tr><td class="conj-pron">Tu</td><td>fal<em>aste</em></td><td>com<em>este</em></td><td>part<em>iste</em></td></tr>
+      <tr><td class="conj-pron">Ele</td><td>fal<em>ou</em></td><td>com<em>eu</em></td><td>part<em>iu</em></td></tr>
+      <tr><td class="conj-pron">Nós</td><td>fal<em>ámos</em></td><td>com<em>emos</em></td><td>part<em>imos</em></td></tr>
+      <tr><td class="conj-pron">Eles</td><td>fal<em>aram</em></td><td>com<em>eram</em></td><td>part<em>iram</em></td></tr>
+    </table>
+    <div class="g-subtitle">Irregolari indispensabili</div>
+    <table class="conj-table">
+      <tr><th></th><th>ser/ir</th><th>ter</th><th>estar</th><th>fazer</th><th>vir</th></tr>
+      <tr><td class="conj-pron">Eu</td><td><em>fui</em></td><td><em>tive</em></td><td><em>estive</em></td><td><em>fiz</em></td><td><em>vim</em></td></tr>
+      <tr><td class="conj-pron">Tu</td><td>foste</td><td>tiveste</td><td>estiveste</td><td>fizeste</td><td>vieste</td></tr>
+      <tr><td class="conj-pron">Ele</td><td>foi</td><td>teve</td><td>esteve</td><td>fez</td><td>veio</td></tr>
+      <tr><td class="conj-pron">Nós</td><td>fomos</td><td>tivemos</td><td>estivemos</td><td>fizemos</td><td>viemos</td></tr>
+      <tr><td class="conj-pron">Eles</td><td>foram</td><td>tiveram</td><td>estiveram</td><td>fizeram</td><td>vieram</td></tr>
+    </table>
+    <div class="rule-block"><strong>Nota:</strong> SER e IR hanno lo stesso PPS (fui, foste, foi…). Il contesto chiarisce il significato.</div>
+  `},
+];
+
+// ══════════════════════════════════════════════════════════
+// STATIC EXERCISES
+// ══════════════════════════════════════════════════════════
+const EXERCISES = [
+  { t:'mcq', ch:1, topic:'Verbo SER', q:'Eu ___ médico.', opts:['sou','és','é','somos'], a:'sou', ex:'Con "eu" il verbo SER è <strong>sou</strong>. SER si usa per la professione (caratteristica stabile).' },
+  { t:'mcq', ch:1, topic:'Verbo SER', q:'A Katja ___ alemã.', opts:['sou','és','é','são'], a:'é', ex:'"Ela" → <strong>é</strong>. Si usa SER per la nazionalità, mai ESTAR.' },
+  { t:'fill', ch:1, topic:'Verbo SER', q:'Nós ___ amigos. (SER)', a:'somos', ex:'"Nós" → <strong>somos</strong>. Terminazione 1ª persona plurale di SER.' },
+  { t:'mcq', ch:1, topic:'SER/ESTAR', q:'Hoje ___ quarta-feira.', opts:['estou','estamos','é','está'], a:'é', ex:'Per il giorno della settimana si usa <strong>SER</strong>, non ESTAR: "Hoje é quarta-feira."' },
+  { t:'mcq', ch:1, topic:'Verbo ESTAR', q:'O João ___ em Lisboa.', opts:['é','sou','está','somos'], a:'está', ex:'Per il luogo di un soggetto mobile → <strong>ESTAR</strong>. "Está em Lisboa" = è a Lisbona (ci può andare via).' },
+  { t:'mcq', ch:1, topic:'SER/ESTAR', q:'A sopa ___ quente.', opts:['é','está','somos','sou'], a:'está', ex:'La zuppa è calda <em>adesso</em> → temporaneo → <strong>ESTAR</strong>.' },
+  { t:'fill', ch:1, topic:'Verbo ESTAR', q:'Eu ___ bem, obrigado. (ESTAR)', a:'estou', ex:'"Eu" + ESTAR → <strong>estou</strong>. Stato temporaneo.' },
+  { t:'mcq', ch:1, topic:'Artigos', q:'"___ carro é vermelho."', opts:['A','O','As','Os'], a:'O', ex:'"Carro" è maschile singolare → articolo <strong>O</strong>. Parole in -o quasi sempre maschili.' },
+  { t:'mcq', ch:1, topic:'Artigos + Prep.', q:'Ela é filha ___ professor. (de+o)', opts:['do','da','no','ao'], a:'do', ex:'<strong>de + o = do</strong>. Contrazione obbligatoria in portoghese.' },
+  { t:'tf', ch:1, topic:'Artigos', q:'"A mota" usa l\'articolo femminile perché finisce in -a.', a:true, ex:'Corretto! "Mota" finisce in -a ed è femminile → <strong>a mota</strong>.' },
+  { t:'fill', ch:1, topic:'Verbos -AR', q:'Tu ___ (falar) português?', a:'falas', ex:'"Tu" + falar → <strong>falas</strong>. Terminazione -AR 2ª persona: -as.' },
+  { t:'mcq', ch:1, topic:'Verbos -AR', q:'Eles ___ (trabalhar) em Lisboa.', opts:['trabalho','trabalhas','trabalha','trabalham'], a:'trabalham', ex:'"Eles" = 3ª persona plurale → <strong>trabalham</strong>. -AR: vocês/eles/elas → -am.' },
+  { t:'mcq', ch:2, topic:'Possessivos', q:'Este é ___ pai. (il mio)', opts:['o meu','a minha','os meus','a tua'], a:'o meu', ex:'"Pai" è maschile singolare → <strong>o meu</strong>. Il possessivo concorda col nome posseduto.' },
+  { t:'fill', ch:2, topic:'Possessivos', q:'Esta é ___ mãe. (la tua)', a:'a tua', ex:'"Mãe" è femminile sing. → <strong>a tua</strong>.' },
+  { t:'mcq', ch:2, topic:'Possessivos', q:'A Ana tem um cão. O cão é ___', opts:['dela','dele','deles','delas'], a:'dela', ex:'"Ana" è femminile → <strong>dela</strong> (evita ambiguità con "sua").' },
+  { t:'mcq', ch:2, topic:'Verbo TER', q:'Eu ___ 25 anos.', opts:['tenho','tens','tem','temos'], a:'tenho', ex:'"Eu" + TER → <strong>tenho</strong>. Irregolare: tenho, tens, tem, temos, têm.' },
+  { t:'fill', ch:2, topic:'Verbo VIR', q:'Ela ___ de Moscovo. (VIR)', a:'vem', ex:'"Ela" + VIR → <strong>vem</strong>. Conjugazione: venho, vens, vem, vimos, vêm.' },
+  { t:'mcq', ch:3, topic:'Plural -ÃO', q:'Plurale di "cão":', opts:['cãos','cães','cões','cão'], a:'cães', ex:'"Cão" → <strong>cães</strong> (pattern -ães). Gruppo: cão, pão, alemão → -ães.' },
+  { t:'mcq', ch:3, topic:'Plural -ÃO', q:'Plurale di "irmão":', opts:['irmães','irmões','irmãos','irmão'], a:'irmãos', ex:'"Irmão" → <strong>irmãos</strong> (pattern -ãos). Gruppo: mão, grão, irmão.' },
+  { t:'mcq', ch:3, topic:'Plural -ÃO', q:'Plurale di "coração":', opts:['coraçãos','corações','coraçães','corações'], a:'corações', ex:'"Coração" → <strong>corações</strong>. Tutte le parole in -ção fanno -ções.' },
+  { t:'mcq', ch:3, topic:'Interrogativos', q:'___ é ele? (Chi è lui?)', opts:['O que','Onde','Quem','Qual'], a:'Quem', ex:'<strong>Quem</strong> = chi (persone). "O que" è per le cose.' },
+  { t:'mcq', ch:3, topic:'Interrogativos', q:'___ moras? (Dove abiti?)', opts:['Quando','Onde','Como','Quem'], a:'Onde', ex:'<strong>Onde</strong> = dove (luogo statico). "Aonde" con movimento: "Aonde vais?"' },
+  { t:'fill', ch:4, topic:'Verbos -ER', q:'Eu ___ (comer) às 13h.', a:'como', ex:'"Eu" + comer → <strong>como</strong>. Terminazione -ER 1ª persona: -o.' },
+  { t:'mcq', ch:4, topic:'Verbos irregolari', q:'Eu não ___ onde está a chave. (SABER)', opts:['sei','sabes','sabe','sabemos'], a:'sei', ex:'"Eu" + SABER → <strong>sei</strong>. Irregolare: sei, sabes, sabe, sabemos, sabem.' },
+  { t:'mcq', ch:4, topic:'Verbos irregolari', q:'Tu ___ ir? (PODER)', opts:['posso','podes','pode','podem'], a:'podes', ex:'"Tu" + PODER → <strong>podes</strong>. Irregolare: posso, podes, pode, podemos, podem.' },
+  { t:'mcq', ch:5, topic:'Estar a + inf.', q:'Ela ___ a estudar agora.', opts:['é','está','tem','vai'], a:'está', ex:'<strong>Estar a + infinitivo</strong> = progressivo PT europeo. "Está a estudar" = sta studiando.' },
+  { t:'tf', ch:5, topic:'Estar a + inf.', q:'"Eu estou a falar" significa "Sto parlando".', a:true, ex:'Esatto! <strong>Estar a + infinitivo</strong> è il progressivo del portoghese europeo.' },
+  { t:'mcq', ch:7, topic:'IR + Infinitivo', q:'Amanhã eu ___ estudar.', opts:['vou','vais','vai','vamos'], a:'vou', ex:'"Eu" + IR = <strong>vou</strong>. "Vou estudar" = andrò a studiare (futuro prossimo).' },
+  { t:'fill', ch:7, topic:'IR + Infinitivo', q:'Eles ___ jantar fora. (IR+inf.)', a:'vão', ex:'"Eles" + IR = <strong>vão</strong>. Conjugazione: vou, vais, vai, vamos, vão.' },
+  { t:'mcq', ch:8, topic:'PPS', q:'Ontem eu ___ ao cinema. (IR, passato)', opts:['fui','fiz','foi','foste'], a:'fui', ex:'"Eu" + IR nel PPS = <strong>fui</strong>. SER e IR hanno stesso PPS. "Ontem" = ieri → passato.' },
+  { t:'fill', ch:8, topic:'PPS', q:'Ela ___ (falar) com o médico ontem.', a:'falou', ex:'"Ela" + falar PPS = <strong>falou</strong>. PPS -AR: falei, falaste, falou, falámos, falaram.' },
+  { t:'mcq', ch:8, topic:'PPS irregolari', q:'Nós ___ muito ontem. (fazer, PPS)', opts:['fizemos','fezemos','fazemus','fizamos'], a:'fizemos', ex:'"Nós" + fazer PPS = <strong>fizemos</strong>. FAZER irregolare: fiz, fizeste, fez, fizemos, fizeram.' },
+  { t:'translate', ch:1, topic:'Frasi base', q:'Come ti chiami?', a:'Como te chamas?', alts:['Como é que te chamas?','Como se chama?'], ex:'"Como te chamas?" = Come ti chiami? Forma formale: "Como se chama?" (Lei come si chiama?).' },
+  { t:'translate', ch:1, topic:'Frasi base', q:'Sono italiano.', a:'Sou italiano.', ex:'"Sou" = 1ª pers. di SER. Per la nazionalità si usa SER, non ESTAR.' },
+  { t:'translate', ch:2, topic:'Possessivos', q:'Questo è il mio libro.', a:'Este é o meu livro.', ex:'"Este" (vicino a chi parla), "o meu" concorda con "livro" (maschile sing.).' },
+  { t:'translate', ch:5, topic:'Estar a', q:'Sto mangiando.', a:'Estou a comer.', ex:'Progressivo PT europeo: <strong>ESTAR + a + infinitivo</strong>. "Comer" rimane all\'infinito.' },
+];
+
+// ══════════════════════════════════════════════════════════
+// FLASHCARD DATA
+// ══════════════════════════════════════════════════════════
+const FC_DATA = {
+  vocab:[
+    {pt:'a casa',it:'la casa',ex:'A minha casa é grande.'},
+    {pt:'o carro',it:'la macchina',ex:'O carro é vermelho.'},
+    {pt:'o amigo / a amiga',it:'l\'amico / l\'amica',ex:'Ela é a minha melhor amiga.'},
+    {pt:'o trabalho',it:'il lavoro',ex:'Vou para o trabalho de manhã.'},
+    {pt:'a cidade',it:'la città',ex:'Lisboa é uma cidade bonita.'},
+    {pt:'a manhã',it:'la mattina',ex:'Acordo de manhã cedo.'},
+    {pt:'a tarde',it:'il pomeriggio',ex:'À tarde vou ao ginásio.'},
+    {pt:'a noite',it:'la sera / la notte',ex:'Janto à noite em casa.'},
+    {pt:'hoje',it:'oggi',ex:'Hoje é quarta-feira.'},
+    {pt:'amanhã',it:'domani',ex:'Amanhã vou ao supermercado.'},
+    {pt:'ontem',it:'ieri',ex:'Ontem fui ao cinema.'},
+    {pt:'a família',it:'la famiglia',ex:'A minha família é portuguesa.'},
+    {pt:'o pai',it:'il padre / il papà',ex:'O meu pai é médico.'},
+    {pt:'a mãe',it:'la madre / la mamma',ex:'A minha mãe é professora.'},
+    {pt:'o irmão / a irmã',it:'il fratello / la sorella',ex:'Tenho um irmão e uma irmã.'},
+    {pt:'vermelho',it:'rosso',ex:'O carro é vermelho.'},
+    {pt:'azul',it:'azzurro / blu',ex:'O céu é azul.'},
+    {pt:'verde',it:'verde',ex:'As plantas são verdes.'},
+    {pt:'amarelo',it:'giallo',ex:'O sol é amarelo.'},
+    {pt:'branco / preto',it:'bianco / nero',ex:'A neve é branca. O gato é preto.'},
+  ],
+  verbs:[
+    {pt:'falar',it:'parlare',ex:'Eu falo português.'},
+    {pt:'comer',it:'mangiare',ex:'Nós comemos às 13h.'},
+    {pt:'beber',it:'bere',ex:'Tu bebes café?'},
+    {pt:'estudar',it:'studiare',ex:'Ela estuda medicina.'},
+    {pt:'trabalhar',it:'lavorare',ex:'Ele trabalha em Lisboa.'},
+    {pt:'morar',it:'abitare / vivere',ex:'Moro em Portugal.'},
+    {pt:'gostar de',it:'piacere / gradire',ex:'Eu gosto de música.'},
+    {pt:'ter',it:'avere',ex:'Tenho 28 anos.'},
+    {pt:'fazer',it:'fare',ex:'O que fazes hoje?'},
+    {pt:'ir',it:'andare',ex:'Vou à escola.'},
+    {pt:'vir',it:'venire',ex:'Ela vem de Roma.'},
+    {pt:'saber',it:'sapere',ex:'Eu sei falar inglês.'},
+    {pt:'poder',it:'potere',ex:'Posso ajudar?'},
+    {pt:'querer',it:'volere',ex:'Quero um café.'},
+    {pt:'chamar-se',it:'chiamarsi',ex:'Como te chamas?'},
+    {pt:'levantar-se',it:'alzarsi',ex:'Levanto-me às 7h.'},
+    {pt:'deitar-se',it:'coricarsi',ex:'Deito-me às 23h.'},
+    {pt:'vestir-se',it:'vestirsi',ex:'Visto-me depressa.'},
+  ],
+  phrases:[
+    {pt:'Bom dia!',it:'Buongiorno!',ex:'Bom dia! Como está?'},
+    {pt:'Boa tarde!',it:'Buon pomeriggio!',ex:'Boa tarde, senhora!'},
+    {pt:'Boa noite!',it:'Buona sera / Buona notte!',ex:'Boa noite a todos!'},
+    {pt:'Como estás?',it:'Come stai?',ex:'Olá! Como estás?'},
+    {pt:'Tudo bem?',it:'Tutto bene?',ex:'Tudo bem? Sim, obrigado!'},
+    {pt:'Muito prazer!',it:'Piacere!',ex:'Muito prazer! Eu sou a Ana.'},
+    {pt:'Obrigado / Obrigada',it:'Grazie (m/f)',ex:'Obrigada pela ajuda!'},
+    {pt:'De nada',it:'Prego',ex:'— Obrigado! — De nada.'},
+    {pt:'Por favor',it:'Per favore',ex:'Um café, por favor.'},
+    {pt:'Desculpe',it:'Scusi / Mi scusi',ex:'Desculpe, onde fica a estação?'},
+    {pt:'Quanto custa?',it:'Quanto costa?',ex:'Quanto custa este livro?'},
+    {pt:'Não percebo',it:'Non capisco',ex:'Fala mais devagar, não percebo.'},
+    {pt:'Pode repetir?',it:'Può ripetere?',ex:'Pode repetir, por favor?'},
+    {pt:'Até logo!',it:'A presto!',ex:'Até logo! Boa tarde.'},
+    {pt:'Até amanhã!',it:'A domani!',ex:'Até amanhã, boa noite!'},
+  ],
+};
+
+// ══════════════════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════════════════
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  document.getElementById('scroll-area').scrollTo({ top: 0, behavior: 'instant' });
+
+  if (id === 'grammar' && !S.grammarInited) { buildGrammarList(); S.grammarInited = true; }
+  if (id === 'flashcards') initFC();
+  if (id === 'progress') buildProgress();
+}
+
+// ══════════════════════════════════════════════════════════
+// API KEY
+// ══════════════════════════════════════════════════════════
+function showModal() { document.getElementById('modal-overlay').classList.add('vis'); }
+function closeModal() { document.getElementById('modal-overlay').classList.remove('vis'); }
+function saveKey() {
+  const k = document.getElementById('key-input').value.trim();
+  if (k) { S.apiKey = k; try { localStorage.setItem('pt_api_key', k); } catch(e){} }
+  closeModal();
+}
+try { if (!S.apiKey) showModal(); } catch(e){}
+
+// ══════════════════════════════════════════════════════════
+// SCORE
+// ══════════════════════════════════════════════════════════
+function trackScore(correct, ch) {
+  S.score.total++;
+  correct ? S.score.correct++ : S.score.wrong++;
+  document.getElementById('sc-total').textContent   = S.score.total;
+  document.getElementById('sc-correct').textContent = S.score.correct;
+  document.getElementById('sc-wrong').textContent   = S.score.wrong;
+  const pct = Math.round(S.score.correct / S.score.total * 100);
+  document.getElementById('sc-pct').textContent = pct + '%';
+  if (ch) {
+    if (!S.chapterStats[ch]) S.chapterStats[ch] = { t:0, c:0 };
+    S.chapterStats[ch].t++;
+    if (correct) S.chapterStats[ch].c++;
+    try { localStorage.setItem('pt_ch_stats', JSON.stringify(S.chapterStats)); } catch(e){}
+  }
+}
+function resetScore() {
+  S.score = { total:0, correct:0, wrong:0 };
+  ['sc-total','sc-correct','sc-wrong'].forEach(id => document.getElementById(id).textContent = '0');
+  document.getElementById('sc-pct').textContent = '—';
+}
+
+// ══════════════════════════════════════════════════════════
+// FILTERS
+// ══════════════════════════════════════════════════════════
+function setChapter(v, el) {
+  S.chapter = v;
+  document.querySelectorAll('#chapter-chips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+function setType(v, el) {
+  S.type = v;
+  document.querySelectorAll('#type-chips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════
+// EXERCISES
+// ══════════════════════════════════════════════════════════
+function loadStatic() {
+  let pool = [...EXERCISES];
+  if (S.chapter !== 'all') pool = pool.filter(e => String(e.ch) === S.chapter);
+  if (S.type !== 'all') pool = pool.filter(e => e.t === S.type);
+  if (!pool.length) {
+    document.getElementById('exercise-area').innerHTML = `<div class="state-empty"><div class="empty-ico ico"></div><p>Nessun esercizio per questa combinazione. Cambia filtri.</p></div>`;
+    return;
+  }
+  pool.sort(() => Math.random() - 0.5);
+  renderExercises(pool.slice(0, 8));
+}
+
+async function genAI() {
+  if (!S.apiKey) { showModal(); return; }
+  document.getElementById('exercise-area').innerHTML = `<div class="state-loading"><div class="spinner"></div><div class="loading-txt">Claude genera esercizi…</div></div>`;
+
+  const chTopics = {
+    '1':'Verbo SER, ESTAR, verbi -AR, articoli definiti, genere/numero, preposizioni A/DE/EM',
+    '2':'Possessivi, dimostrativi, verbi TER/VIR/SABER, numeri, professioni',
+    '3':'Plurale -ão/-ães/-ões, articoli indefiniti, interrogativi',
+    '4':'Verbo HAVER, verbi -ER irregolari (fazer/dizer/poder/querer/ver), verbi -IR, giorni/stagioni',
+    '5':'Estar a+infinitivo, verbi riflessivi, colori, abbigliamento, famiglia, ore',
+    '6':'Ir a+locali, dare/chiedere indicazioni, fare acquisti',
+    '7':'IR+infinitivo (futuro), preposizioni para/por/em, desde/há',
+    '8':'Pretérito Perfeito Simples (PPS) regolari e irregolari',
+    '9':'Pronomi di oggetto diretto e indiretto',
+    'all':'Tutti gli argomenti A1: SER/ESTAR, articoli, possessivi, interrogativi, plurali, -ER/-IR, PPS, futuro, progressivo'
+  };
+  const typeInstr = {
+    'all':'Mescola: scelta multipla (mcq), riempimento (fill), vero/falso (tf), traduzione IT→PT (translate)',
+    'mcq':'Solo scelta multipla con 4 opzioni',
+    'fill':'Solo riempimento (una forma da inserire)',
+    'tf':'Solo vero/falso su regole grammaticali (metà vere metà false)',
+    'translate':'Solo traduzione italiano → portoghese europeo',
+  };
+
+  const p = `Sei un insegnante esperto di portoghese europeo (PT-PT) per studenti italiani A1.
+Argomenti: ${chTopics[S.chapter] || chTopics['all']}
+Tipo: ${typeInstr[S.type]}
+Genera 6 esercizi vari e pedagogici. Rispondi SOLO con JSON valido, nessun testo o markdown.
+[{"type":"mcq"|"fill"|"tf"|"translate","chapter":N,"topic":"nome","question":"testo (usa ___ per fill)","options":["a","b","c","d"],"answer":"risposta","altAnswers":["variante"],"explanation":"spiegazione italiana 2-3 frasi della regola grammaticale"}]
+Usa sempre PT europeo (estar A+infinitivo, non gerundio). Spiegazioni in italiano con regole specifiche.`;
+
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:2000, messages:[{role:'user',content:p}] })
+    });
+    const d = await r.json();
+    if (d.error) throw new Error(d.error.message);
+    let raw = d.content[0].text.trim().replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'');
+    renderExercises(JSON.parse(raw));
+  } catch(e) {
+    document.getElementById('exercise-area').innerHTML = `<div class="state-empty"><div class="empty-ico ico"></div><p style="color:var(--err)">Errore: ${e.message}</p><br><button class="btn btn-secondary" style="margin:0 auto;" onclick="loadStatic()">Usa esercizi offline</button></div>`;
+  }
+}
+
+function renderExercises(list) {
+  const area = document.getElementById('exercise-area');
+  area.innerHTML = '';
+  list.forEach((ex, i) => area.appendChild(buildExCard(ex, i)));
+}
+
+function buildExCard(ex, i) {
+  const typeMap = { mcq:'Scelta multipla', fill:'Riempimento', tf:'Vero / Falso', translate:'Traduzione' };
+  const tagMap  = { mcq:'badge-mcq', fill:'badge-fill', tf:'badge-tf', translate:'badge-translate' };
+  const card = document.createElement('div');
+  card.className = 'ex-card';
+  card.id = `ex${i}`;
+  card.dataset.answer = ex.answer ?? ex.a ?? '';
+  card.dataset.alts = JSON.stringify(ex.altAnswers || ex.alts || []);
+  card.dataset.ch = ex.chapter || ex.ch || '';
+
+  const type  = ex.type || ex.t;
+  const topic = ex.topic || '';
+  const chNum = ex.chapter || ex.ch || '';
+  const expl  = ex.explanation || ex.ex || '';
+  const qhtml = (ex.question || ex.q || '').replace(/___/g, '<em>___</em>');
+
+  let body = '';
+  if (type === 'fill' || type === 'translate') {
+    const ph = type === 'translate' ? 'Scrivi in portoghese…' : 'Inserisci la forma corretta…';
+    body = `<input type="text" class="fill-inp" id="fi${i}" placeholder="${ph}" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">`;
+  } else if (type === 'mcq') {
+    const opts = ex.options || ex.opts || [];
+    body = `<div class="mcq-list">${opts.map((o, oi) =>
+      `<button class="mcq-opt" id="mo${i}_${oi}" data-opt="${o.replace(/"/g,'&quot;')}">${o}</button>`
+    ).join('')}</div>`;
+  } else if (type === 'tf') {
+    body = `<div class="tf-pair">
+      <button class="tf-btn" id="tf${i}T" data-val="true">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Vero
+      </button>
+      <button class="tf-btn" id="tf${i}F" data-val="false">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Falso
+      </button>
+    </div>`;
+  }
+
+  const checkBtn = (type === 'fill' || type === 'translate')
+    ? `<button class="btn btn-fill btn-sm js-check" style="gap:6px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Controlla
+       </button>` : '';
+
+  card.innerHTML = `
+    <div class="ex-meta">
+      <span class="ex-badge ${tagMap[type] || ''}">${typeMap[type] || type}</span>
+      <span class="ex-chapter">Cap.${chNum}${topic ? ' · ' + topic : ''}</span>
+    </div>
+    <div class="ex-q">${qhtml}</div>
+    ${body}
+    <div class="ex-actions">
+      ${checkBtn}
+      <button class="btn btn-ghost btn-sm js-explain" style="gap:6px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Spiegazione
+      </button>
+      <button class="btn btn-ghost btn-sm js-reveal" style="gap:6px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Risposta
+      </button>
+    </div>
+    <div class="feedback" id="fb${i}"></div>
+    <div class="expl" id="ep${i}">${expl}</div>
+  `;
+
+  // Wire events with proper closures — no inline string escaping
+  const inp = card.querySelector('.fill-inp');
+  if (inp) {
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.target.blur(); checkFill(i); } });
+  }
+  card.querySelector('.js-check')?.addEventListener('click', () => checkFill(i));
+  card.querySelector('.js-explain')?.addEventListener('click', () => toggleEx(i));
+  card.querySelector('.js-reveal')?.addEventListener('click', () => revealEx(i, card.dataset.answer));
+
+  card.querySelectorAll('.mcq-opt').forEach(btn => {
+    btn.addEventListener('click', () => checkMCQ(i, btn.dataset.opt, btn));
+  });
+  card.querySelectorAll('.tf-btn').forEach(btn => {
+    btn.addEventListener('click', () => checkTF(i, btn.dataset.val === 'true', btn));
+  });
+
+  return card;
+}
+
+function checkFill(i) {
+  const card = document.getElementById(`ex${i}`);
+  const inp  = document.getElementById(`fi${i}`);
+  if (!inp || inp.disabled) return;
+  const val = inp.value.trim().toLowerCase();
+  const ans = (card.dataset.answer||'').toLowerCase();
+  const alts = JSON.parse(card.dataset.alts||'[]').map(a=>a.toLowerCase());
+  const ok = val === ans || alts.includes(val);
+  inp.classList.add(ok ? 'inp-ok' : 'inp-err');
+  inp.disabled = true;
+  card.classList.add(ok ? 'state-ok' : 'state-err');
+  const fb = document.getElementById(`fb${i}`);
+  fb.className = 'feedback ' + (ok ? 'fb-ok' : 'fb-err');
+  fb.textContent = ok ? '✓ Corretto! Bom trabalho!' : `✗ Sbagliato. Risposta: "${card.dataset.answer}"`;
+  document.getElementById(`ep${i}`).classList.add('vis');
+  trackScore(ok, card.dataset.ch);
+}
+
+function checkMCQ(i, sel, btn) {
+  const card = document.getElementById(`ex${i}`);
+  if (card.querySelector('.mcq-opt:disabled')) return;
+  const ans = card.dataset.answer;
+  const ok = sel === ans;
+  card.querySelectorAll('.mcq-opt').forEach(b => {
+    b.disabled = true;
+    if (b.textContent.trim() === ans) b.classList.add('opt-show');
+  });
+  btn.classList.add(ok ? 'opt-ok' : 'opt-err');
+  card.classList.add(ok ? 'state-ok' : 'state-err');
+  const fb = document.getElementById(`fb${i}`);
+  fb.className = 'feedback ' + (ok ? 'fb-ok' : 'fb-err');
+  fb.textContent = ok ? '✓ Corretto!' : `✗ Sbagliato. Risposta: "${ans}"`;
+  document.getElementById(`ep${i}`).classList.add('vis');
+  trackScore(ok, card.dataset.ch);
+}
+
+function checkTF(i, sel, btn) {
+  const card = document.getElementById(`ex${i}`);
+  if (card.querySelector('.tf-btn:disabled')) return;
+  const raw = card.dataset.answer;
+  const ans = raw === 'true' || raw === true;
+  const ok  = sel === ans;
+  card.querySelectorAll('.tf-btn').forEach(b => b.disabled = true);
+  btn.classList.add(ok ? 'tf-ok' : 'tf-err');
+  card.classList.add(ok ? 'state-ok' : 'state-err');
+  const fb = document.getElementById(`fb${i}`);
+  fb.className = 'feedback ' + (ok ? 'fb-ok' : 'fb-err');
+  fb.textContent = ok ? '✓ Corretto!' : `✗ Sbagliato. Era ${ans ? 'Vero' : 'Falso'}.`;
+  document.getElementById(`ep${i}`).classList.add('vis');
+  trackScore(ok, card.dataset.ch);
+}
+
+function toggleEx(i) { document.getElementById(`ep${i}`).classList.toggle('vis'); }
+
+function revealEx(i, ans) {
+  const card = document.getElementById(`ex${i}`);
+  const fb = document.getElementById(`fb${i}`);
+  fb.className = 'feedback fb-err';
+  fb.textContent = `👁 Risposta: "${ans}"`;
+  document.getElementById(`ep${i}`).classList.add('vis');
+  const inp = document.getElementById(`fi${i}`);
+  if (inp) { inp.disabled = true; inp.value = ans; }
+  card.querySelectorAll('.mcq-opt, .tf-btn').forEach(b => {
+    b.disabled = true;
+    const txt = b.textContent.trim();
+    if (txt === ans || (txt.includes('Vero') && ans === 'true') || (txt.includes('Falso') && ans === 'false')) b.classList.add('opt-show');
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// GRAMMAR
+// ══════════════════════════════════════════════════════════
+function buildGrammarList() {
+  const el = document.getElementById('grammar-list-inner');
+  el.innerHTML = '';
+  GRAMMAR.forEach(g => {
+    const d = document.createElement('div');
+    d.className = 'grammar-card';
+    d.innerHTML = `<div class="g-card-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div><div class="g-card-body"><div class="g-card-title">${g.title}</div><div class="g-card-sub">${g.sub}</div></div><span class="g-card-ch">Cap.${g.ch}</span><span class="g-card-arrow ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>`;
+    d.onclick = () => openGrammar(g);
+    el.appendChild(d);
+  });
+}
+
+function openGrammar(g) {
+  document.getElementById('grammar-list-inner').style.display = 'none';
+  const dp = document.getElementById('grammar-detail-panel');
+  dp.innerHTML = `
+    <button class="back-btn" onclick="closeGrammar()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Torna all'elenco</button>
+    <div class="g-detail-card">
+      <div class="g-detail-title">${g.title}</div>
+      <div class="g-detail-sub">${g.sub}</div>
+      ${g.content}
+    </div>
+  `;
+  dp.classList.add('active');
+  document.getElementById('scroll-area').scrollTo({ top: 0, behavior: 'instant' });
+}
+
+function closeGrammar() {
+  document.getElementById('grammar-list-inner').style.display = '';
+  document.getElementById('grammar-detail-panel').classList.remove('active');
+  document.getElementById('grammar-detail-panel').innerHTML = '';
+}
+
+// ══════════════════════════════════════════════════════════
+// FLASHCARDS
+// ══════════════════════════════════════════════════════════
+function setFCMode(mode, el) {
+  S.fcMode = mode;
+  document.querySelectorAll('#fc-mode-chips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  initFC();
+}
+
+function initFC() {
+  S.fcCards = [...(FC_DATA[S.fcMode]||[])].sort(() => Math.random() - 0.5);
+  S.fcIndex = 0;
+  renderFC();
+}
+
+async function genFC() {
+  if (!S.apiKey) { showModal(); return; }
+  document.getElementById('fc-wrap').innerHTML = `<div class="state-loading"><div class="spinner"></div><div class="loading-txt">Generando…</div></div>`;
+  const mDesc = { vocab:'vocabolario A1 (sostantivi, aggettivi)', verbs:'verbi A1 comuni', phrases:'frasi e espressioni communicative A1' };
+  const p = `Sei un insegnante di portoghese europeo A1 per italiani. Genera 15 flashcard di ${mDesc[S.fcMode]}. Solo JSON valido:
+[{"pt":"PT","it":"IT","ex":"frase esempio in PT"}]`;
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:800, messages:[{role:'user',content:p}] })
+    });
+    const d = await r.json();
+    if (d.error) throw new Error(d.error.message);
+    let raw = d.content[0].text.trim().replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'');
+    S.fcCards = JSON.parse(raw);
+    S.fcIndex = 0;
+    renderFC();
+  } catch(e) { initFC(); }
+}
+
+function renderFC() {
+  const wrap = document.getElementById('fc-wrap');
+  if (!S.fcCards.length) { wrap.innerHTML = '<div class="state-empty"><p>Nessuna flashcard.</p></div>'; return; }
+  S.fcSeen = Math.max(S.fcSeen, S.fcIndex + 1);
+  const c = S.fcCards[S.fcIndex];
+  const total = S.fcCards.length;
+  wrap.innerHTML = `
+    <div class="fc-container" id="fc-card" onclick="flipFC()">
+      <div class="fc-inner">
+        <div class="fc-face fc-front">
+          <div class="fc-word">${c.pt}</div>
+          <div class="fc-hint"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> PT · tocca per la traduzione</div>
+        </div>
+        <div class="fc-face fc-back">
+          <div class="fc-translation">${c.it}</div>
+          <div class="fc-example">"${c.ex}"</div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-progress-bar"><div class="fc-progress-fill" style="width:${Math.round((S.fcIndex+1)/total*100)}%"></div></div>
+    <div class="fc-swipe-hint"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8l-4 4 4 4"/><path d="M17 8l4 4-4 4"/></svg> scorri con le frecce</div>
+    <div class="fc-nav">
+      <button class="fc-arrow" onclick="prevFC()" ${S.fcIndex===0?'disabled':''}>‹</button>
+      <div class="fc-counter">${S.fcIndex+1} / ${total}</div>
+      <button class="fc-arrow" onclick="nextFC()" ${S.fcIndex>=total-1?'disabled':''} aria-label="Successiva"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  `;
+}
+
+function flipFC() { document.getElementById('fc-card')?.classList.toggle('flipped'); }
+function nextFC() { if (S.fcIndex < S.fcCards.length-1) { S.fcIndex++; renderFC(); } }
+function prevFC() { if (S.fcIndex > 0) { S.fcIndex--; renderFC(); } }
+
+// Swipe support for flashcards
+let _sx = null;
+document.addEventListener('touchstart', e => { _sx = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', e => {
+  if (!_sx) return;
+  const dx = e.changedTouches[0].clientX - _sx;
+  _sx = null;
+  const fc = document.getElementById('fc-card');
+  if (!fc) return;
+  if (Math.abs(dx) > 60) { dx < 0 ? nextFC() : prevFC(); }
+}, { passive: true });
+
+// ══════════════════════════════════════════════════════════
+// PROGRESS
+// ══════════════════════════════════════════════════════════
+function buildProgress() {
+  const pct = S.score.total > 0 ? Math.round(S.score.correct/S.score.total*100)+'%' : '—';
+  const el = document.getElementById('progress-inner');
+  const chapters = [
+    {n:1,name:'Cap. 1 · SER, ESTAR, -AR, Artigos'},
+    {n:2,name:'Cap. 2 · Possessivos, TER, VIR'},
+    {n:3,name:'Cap. 3 · Plural -ão, Interrogativos'},
+    {n:4,name:'Cap. 4 · -ER, -IR, HAVER'},
+    {n:5,name:'Cap. 5 · Estar a, Riflessivi'},
+    {n:6,name:'Cap. 6 · Indicazioni, Negozi'},
+    {n:7,name:'Cap. 7 · Futuro IR + inf.'},
+    {n:8,name:'Cap. 8 · Pretérito Perfeito'},
+    {n:9,name:'Cap. 9 · Pronomi obliqui'},
+  ];
+  el.innerHTML = `
+    <div class="prog-trio">
+      <div class="prog-tile"><div class="p-val" style="color:var(--accent)">${S.score.total}</div><div class="p-lbl">Totale</div></div>
+      <div class="prog-tile"><div class="p-val" style="color:var(--green)">${pct}</div><div class="p-lbl">Successo</div></div>
+      <div class="prog-tile"><div class="p-val" style="color:var(--blue)">${S.fcSeen}</div><div class="p-lbl">Flashcard</div></div>
+    </div>
+    <div class="sec-head">Per capitolo</div>
+    <div class="ch-rows">${chapters.map(ch => {
+      const st = S.chapterStats[ch.n] || {t:0,c:0};
+      const p = st.t > 0 ? Math.round(st.c/st.t*100) : 0;
+      return `<div class="ch-row">
+        <div class="ch-row-top"><span class="ch-row-name">${ch.name}</span><span class="ch-row-pct">${st.t>0?p+'%':'—'}</span></div>
+        <div class="prog-track"><div class="prog-bar" style="width:${p}%"></div></div>
+      </div>`;
+    }).join('')}</div>
+  `;
+}
+
+// ══════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════
+// Wrap in DOMContentLoaded to ensure DOM is ready
+window.addEventListener('DOMContentLoaded', () => {
+  try { initFC(); } catch(e) { console.error('initFC failed:', e); }
+});
+// Also call directly in case DOMContentLoaded already fired
+if (document.readyState !== 'loading') {
+  try { initFC(); } catch(e) { console.error('initFC failed:', e); }
+}
+
+</script>
+</body>
+</html>
